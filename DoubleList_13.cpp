@@ -34,7 +34,7 @@ int main()
     ShowList(); // show list
 
     // Test FindNode and DeleteNode
-    std::cout << "Type data(int) for found : ";
+    std::cout << "Type data(int) for found and delete : ";
     int findData = 0;
     std::cin >> findData;
     Node* isFound = FindNode(findData);
@@ -47,8 +47,26 @@ int main()
     // show list
     std::cout << "\n\n";
     ShowList();
-    
-    // End test of FindNode
+
+    // Test FindNode and AddNodeAfter
+    std::cout << "Type data(int) for found : ";
+    findData = 0;
+    std::cin >> findData;
+    isFound = FindNode(findData);
+    if (isFound)
+    {
+        std::cout << findData << " was founded\n";
+        int newData = 0;
+        std::cout << "Type new int for add : ";
+        std::cin >> newData;
+        AddNodeAfter(isFound, newData);
+    }
+
+
+    // show list
+    std::cout << "\n\n";
+    ShowList();
+
     ClearList(); // Free memory's list
 }
 
@@ -130,6 +148,36 @@ Node* FindNode(int data)
         }
     }
     return nullptr;
+}
+
+void AddNodeAfter(Node* node, int data)
+{
+    if (node == nullptr) // It isn't needed to add after nulptr node!
+    {
+        return;
+    }
+
+    Node* nextNode = node->next;
+
+    Node* newNode = new Node;
+    newNode->data = data;
+
+    node->next = newNode;
+    newNode->prev = node;
+
+    newNode->next = nextNode;
+    //nextNode->prev = newNode;
+
+    if (node == list.tail) // case when we add after tail
+    {
+        list.tail = newNode;
+    }
+    else
+    {
+        nextNode->prev = newNode;
+    }
+   
+    ++list.size;
 }
 
 void ClearList()

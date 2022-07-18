@@ -17,3 +17,5 @@ void DeleteNode(Node* node)
 void ShowList()
 Node* FindNode(int data)
 void AddNodeAfter(Node* node, int data)
+
+ClearList(); // Free memory's list
