@@ -31,8 +31,24 @@ int main()
         AddNode(i);
     }
 
-    ShowList();
+    ShowList(); // show list
 
+    // Test FindNode and DeleteNode
+    std::cout << "Type data(int) for found : ";
+    int findData = 0;
+    std::cin >> findData;
+    Node* isFound = FindNode(findData);
+    if (isFound)
+    {
+        std::cout << findData << " was founded\n";
+        DeleteNode(isFound);
+    }
+
+    // show list
+    std::cout << "\n\n";
+    ShowList();
+    
+    // End test of FindNode
     ClearList(); // Free memory's list
 }
 
@@ -55,6 +71,44 @@ void AddNode(int data)
     }
 }
 
+void DeleteNode(Node* node)
+{
+    if (node == nullptr) // It isn't needed to delete nulptr node!
+    {
+        return;
+    }
+    Node* prevNode = node->prev;
+    Node* nextNode = node->next;
+    //prevNode->next = nextNode;
+    //nextNode->prev = prevNode;
+
+    if (node == list.head && node == list.tail) // case : There is one Node in list
+    {
+        list.head = list.tail = nullptr;
+    }
+    else if (node == list.head) // case : delete head
+    {
+        list.head = nextNode;
+    }
+    else if (node == list.tail) // case : delete tail
+    {
+        list.tail = prevNode;
+    }
+
+    if (prevNode != nullptr)
+    {
+        prevNode->next = nextNode;
+    }
+    
+    if (nextNode != nullptr)
+    {
+        nextNode->prev = prevNode;
+    }
+
+    delete node;
+    --list.size;
+}
+
 void ShowList()
 {
     using namespace std;
@@ -63,6 +117,19 @@ void ShowList()
     {
         cout << i << "#\t" << cur->data << endl;
     }
+}
+
+Node* FindNode(int data)
+{
+    Node* cur = list.head;
+    for (int i = 0; i < list.size; i++, cur = cur->next)
+    {
+        if (cur->data == data)
+        {
+            return cur;
+        }
+    }
+    return nullptr;
 }
 
 void ClearList()
