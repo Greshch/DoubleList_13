@@ -9,87 +9,63 @@ struct Node {
     int data;
 };
 
-struct List {
+class List {
+private:
     Node* head = nullptr;
     Node* tail = nullptr;
     int size = 0;
-} list;
 
-void AddNode(int data);
-void DeleteNode(Node* node);
-void ShowList();
-Node* FindNode(int data);
-void AddNodeAfter(Node* node, int data);
+public:
+    List() {}
+    List(List const& list);
 
-void ClearList(); // free heap memory in list
+    void AddNode(int data);
+    void DeleteNode(Node* node);
+    void ShowList() const;
+    Node* FindNode(int data) const;
+    void AddNodeAfter(Node* node, int data);
+    void ClearList(); // free heap memory in list
+
+    ~List();
+};
+
+
 
 int main()
 {
     const int sizeList = 5;
+    List l1;
     for (int i = 0; i < sizeList; i++) // Fill list
     {
-        AddNode(i);
+        //AddNode(i);
+        l1.AddNode(i + 1);
     }
-
-    ShowList(); // show list
-
-    // Test FindNode and DeleteNode
-    std::cout << "Type data(int) for found and delete : ";
-    int findData = 0;
-    std::cin >> findData;
-    Node* isFound = FindNode(findData);
-    if (isFound)
-    {
-        std::cout << findData << " was founded\n";
-        DeleteNode(isFound);
-    }
-
-    // show list
-    std::cout << "\n\n";
-    ShowList();
-
-    // Test FindNode and AddNodeAfter
-    std::cout << "Type data(int) for found : ";
-    findData = 0;
-    std::cin >> findData;
-    isFound = FindNode(findData);
-    if (isFound)
-    {
-        std::cout << findData << " was founded\n";
-        int newData = 0;
-        std::cout << "Type new int for add : ";
-        std::cin >> newData;
-        AddNodeAfter(isFound, newData);
-    }
-
-
-    // show list
-    std::cout << "\n\n";
-    ShowList();
-
-    ClearList(); // Free memory's list
+    List l2(l1);
+    l1.ShowList();
+    std::cout << "\n";
+    l2.ShowList();
 }
 
-void AddNode(int data)
+void List::AddNode(int data)
 {
     Node* newNode = new Node;
     newNode->data = data;
-    newNode->prev = list.tail;
-    ++list.size;
+    newNode->prev = tail;
+    ++size;
 
-    if (list.size == 1) // case when list is empty!
+    if (size == 1) // case when list is empty!
     {
-        list.head = newNode;
-        list.tail = list.head;
+        head = newNode;
+        tail = head;
     }
     else
     {
-        list.tail->next = newNode;
-        list.tail = newNode;
+        tail->next = newNode;
+        tail = newNode;
     }
 }
 
-void DeleteNode(Node* node)
+void List::DeleteNode(Node* node)
 {
     if (node == nullptr) // It isn't needed to delete nulptr node!
     {
@@ -100,17 +76,17 @@ void DeleteNode(Node* node)
     //prevNode->next = nextNode;
     //nextNode->prev = prevNode;
 
-    if (node == list.head && node == list.tail) // case : There is one Node in list
+    if (node == head && node == tail) // case : There is one Node in list
     {
-        list.head = list.tail = nullptr;
+        head = tail = nullptr;
     }
-    else if (node == list.head) // case : delete head
+    else if (node == head) // case : delete head
     {
-        list.head = nextNode;
+        head = nextNode;
     }
-    else if (node == list.tail) // case : delete tail
+    else if (node == tail) // case : delete tail
     {
-        list.tail = prevNode;
+        tail = prevNode;
     }
 
     if (prevNode != nullptr)
@@ -124,23 +100,23 @@ void DeleteNode(Node* node)
     }
 
     delete node;
-    --list.size;
+    --size;
 }
 
-void ShowList()
+void List::ShowList() const
 {
     using namespace std;
-    Node* cur = list.head;
-    for (int i = 0; i < list.size; i++, cur = cur->next)
+    Node* cur = head;
+    for (int i = 0; i < size; i++, cur = cur->next)
     {
         cout << i << "#\t" << cur->data << endl;
     }
 }
 
-Node* FindNode(int data)
+Node* List::FindNode(int data) const
 {
-    Node* cur = list.head;
-    for (int i = 0; i < list.size; i++, cur = cur->next)
+    Node* cur = head;
+    for (int i = 0; i < size; i++, cur = cur->next)
     {
         if (cur->data == data)
         {
@@ -150,7 +126,7 @@ Node* FindNode(int data)
     return nullptr;
 }
 
-void AddNodeAfter(Node* node, int data)
+void List::AddNodeAfter(Node* node, int data)
 {
     if (node == nullptr) // It isn't needed to add after nulptr node!
     {
@@ -168,32 +144,47 @@ void AddNodeAfter(Node* node, int data)
     newNode->next = nextNode;
     //nextNode->prev = newNode;
 
-    if (node == list.tail) // case when we add after tail
+    if (node == tail) // case when we add after tail
     {
-        list.tail = newNode;
+        tail = newNode;
     }
     else
     {
         nextNode->prev = newNode;
     }
    
-    ++list.size;
+    ++size;
 }
 
-void ClearList()
+void List::ClearList()
 {
-    if (list.size == 0) // It was needed to use this one only in case where lis.size not empty
+    if (size == 0) // It was needed to use this one only in case where lis.size not empty
     {
         return;
     }
     Node* prev = nullptr;
-    for (Node* cur = list.head->next; cur != nullptr; cur = cur->next)
+    for (Node* cur = head->next; cur != nullptr; cur = cur->next)
     {
         prev = cur->prev;
         delete prev;
         prev = nullptr;
     }
-    delete list.tail; // delete tail
-    list.tail = nullptr;
-    list.size = 0;
+    delete tail; // delete tail
+    tail = nullptr;
+    size = 0;
+}
+
+List::List(List const& list)
+{
+    Node* cur = list.head;
+    for (size_t i = 0; i < list.size; i++, cur = cur->next)
+    {
+        int val = cur->data;
+        AddNode(val);
+    }
+}
+
+List::~List()
+{
+    ClearList();
 }
